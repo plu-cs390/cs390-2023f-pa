@@ -57,7 +57,7 @@ public class PoiTests {
                 Poi[].class);
 
         assertEquals(1, result.length);
-        Poi expected1 = new Poi("Farrelli’s Pizza, Parkland","115-215 Garfield St S","pizza, pasta, restaurant", 47.146196, -122.435043);
+        Poi expected1 = new Poi("Farrelli's Pizza, Parkland","115-215 Garfield St S","pizza, pasta, restaurant", 47.146196, -122.435043);
         assertEquals(expected1, result[0]);
     }
 
@@ -69,7 +69,7 @@ public class PoiTests {
 
         Poi[] expected =
                 {
-                        new Poi("Farrelli’s Pizza, Parkland","115-215 Garfield St S","pizza, pasta, restaurant", 47.146196, -122.435043),
+                        new Poi("Farrelli's Pizza, Parkland","115-215 Garfield St S","pizza, pasta, restaurant", 47.146196, -122.435043),
                         new Poi("208 Garfield", "208 Garfield St S", "restaurant", 47.145979, -122.43552 ),
                         new Poi("Pita Pit", "212 Garfield St S Tacoma, WA 98444", "restaurant", 47.145837, -122.434776)
                 };

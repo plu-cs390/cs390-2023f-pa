@@ -110,7 +110,7 @@ Allenmore Golf Course	2013 S Cedar St	tourism, golf, sports, park	47.240013	-122
 Costco Wholesale	2219 S 37th St	food, grocery, costco, shopping, gas	47.225278	-122.468205
 Spanaway BigFoot Java	13573 Pacific Ave S	food, coffee, drive-thru	47.138794	-122.433906
 Trinity Lutheran Church	12115 Park Ave S	church, Lutheran, religion	47.147385	-122.438645
-Farrelli’s Pizza, Parkland	115-215 Garfield St S	pizza, pasta, restaurant	47.146196	-122.435043
+Farrelli's Pizza, Parkland	115-215 Garfield St S	pizza, pasta, restaurant	47.146196	-122.435043
 Red Robin	3901 S Steele St	Burgers, restaurant	47.221573	-122.467710
 Tacoma Goodwill	3121 S 38th St	Thrift store	47.223471	-122.477928
 Dickey’s Barbecue Pit	8425 S Hosmer St	Restaurant, barbecue	47.180171	-122.462717

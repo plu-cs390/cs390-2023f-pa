@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import poi.bootstrap.PoiBootstrap;
@@ -40,8 +41,8 @@ public class ReviewTests {
 
     private HttpClient client = HttpClient.newHttpClient();
 
-    private Poi poi1;
-    private List<Review> reviews;
+    private Poi poi1, poi2;
+    private List<Review> reviews1, reviews2;
 
     @BeforeEach
     public void setUp() {
@@ -52,15 +53,23 @@ public class ReviewTests {
         // Load seed data
         bootstrap.onApplicationStart(null);
 
-        // Get the first Poi in the database
-        poi1 = poiRepo.findAll(Pageable.ofSize(1)).toList().get(0);
+        // Get the first couple Poi in the database
+        List<Poi> page = poiRepo.findAll(Pageable.ofSize(5)).toList();
+        poi1 = page.get(0);
+        poi2 = page.get(1);
 
-        // Create two reviews
-        reviews = List.of(
+        // Create some reviews
+        reviews1 = List.of(
                 new Review(1, "A", poi1.getId()),
                 new Review(4, "B", poi1.getId())
         );
-        reviews = repo.saveAll(reviews);
+        reviews1 = repo.saveAll(reviews1);
+
+        reviews2 = List.of(
+                new Review(0, "C", poi2.getId()),
+                new Review(5, "D", poi2.getId())
+        );
+        reviews2 = repo.saveAll(reviews2);
     }
 
     @Test
@@ -135,7 +144,7 @@ public class ReviewTests {
     }
 
     @Test
-    public void listAllReviews() throws Exception {
+    public void listAllReviews1() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:" + port + "/poi/" + poi1.getId() + "/reviews"))
@@ -146,7 +155,22 @@ public class ReviewTests {
         assertEquals(200, response.statusCode());
         Review[] responseReviews = mapper.readValue(response.body(), Review[].class);
 
-        assertArrayEquals(reviews.toArray(), responseReviews);
+        assertArrayEquals(reviews1.toArray(), responseReviews);
+    }
+
+    @Test
+    public void listAllReviews2() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        HttpRequest req = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/poi/" + poi2.getId() + "/reviews"))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(req, HttpResponse.BodyHandlers.ofString() );
+
+        assertEquals(200, response.statusCode());
+        Review[] responseReviews = mapper.readValue(response.body(), Review[].class);
+
+        assertArrayEquals(reviews2.toArray(), responseReviews);
     }
 
     @Test
@@ -170,23 +194,23 @@ public class ReviewTests {
 
     @Test
     public void deleteReview() throws Exception {
-        Optional<Review> reviewOpt = repo.findById(reviews.get(0).getId());
+        Optional<Review> reviewOpt = repo.findById(reviews1.get(0).getId());
         assertTrue(reviewOpt.isPresent());
 
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + port + "/reviews/" + reviews.get(0).getId()))
+                .uri(URI.create("http://localhost:" + port + "/reviews/" + reviews1.get(0).getId()))
                 .DELETE()
                 .build();
         HttpResponse<String> response = client.send(req, HttpResponse.BodyHandlers.ofString() );
         assertEquals(204, response.statusCode());
 
-        reviewOpt = repo.findById(reviews.get(0).getId());
+        reviewOpt = repo.findById(reviews1.get(0).getId());
         assertTrue(reviewOpt.isEmpty());
     }
 
     @Test
     public void changeReview() throws Exception {
-        Review reviewToChange = reviews.get(0);
+        Review reviewToChange = reviews1.get(0);
         reviewToChange.setStars(2);
         reviewToChange.setReview("QQQQ");
         ObjectMapper mapper = new ObjectMapper();
@@ -207,7 +231,7 @@ public class ReviewTests {
 
     @Test
     public void changeReviewNotExist() throws Exception {
-        Review reviewToChange = reviews.get(0);
+        Review reviewToChange = reviews1.get(0);
         reviewToChange.setStars(2);
         reviewToChange.setReview("QQQQ");
         ObjectMapper mapper = new ObjectMapper();
@@ -227,7 +251,7 @@ public class ReviewTests {
     // differs from the ID in the path, it should always use the path's ID.
     @Test
     public void changeReviewShouldIgnoreId() throws Exception {
-        Review reviewToChange = reviews.get(0);
+        Review reviewToChange = reviews1.get(0);
         String originalId = reviewToChange.getId();
         reviewToChange.setStars(2);
         reviewToChange.setReview("QQQQ");
